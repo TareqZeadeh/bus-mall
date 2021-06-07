@@ -15,13 +15,16 @@ let leftimgindex;
 let middleimgindex;
 let rightimgindex;
 
+let productsnames = [];
+let votes = [];
+let shown = [];
 
 function Product(name, source) {
   this.name = name;
   this.source = source;
   this.votes = 0;
   this.imgshowen = 0;
-
+  productsnames.push(this.name);
   Product.products.push(this);
 }
 Product.products = [];
@@ -54,19 +57,34 @@ function randomindex() {
   return Math.floor(Math.random() * Product.products.length);
 }
 
-
+let picarray = [];
 
 function renderimages() {
+
+
+
   leftimgindex = randomindex();
   middleimgindex = randomindex();
   rightimgindex = randomindex();
-  while (leftimgindex === middleimgindex || middleimgindex === rightimgindex || leftimgindex === rightimgindex) {
+  while ((leftimgindex === middleimgindex || middleimgindex === rightimgindex || leftimgindex === rightimgindex) || (picarray.includes(leftimgindex) || picarray.includes(middleimgindex) || picarray.includes(rightimgindex)
+  )) {
+    leftimgindex = randomindex();
     middleimgindex = randomindex();
     rightimgindex = randomindex();
+
+
   }
+  picarray = [];
+  picarray.push(leftimgindex);
+  picarray.push(middleimgindex);
+  picarray.push(rightimgindex);
+  console.log(picarray);
+
+
   leftimg.src = Product.products[leftimgindex].source;
   middleimg.src = Product.products[middleimgindex].source;
   rightimg.src = Product.products[rightimgindex].source;
+
   Product.products[leftimgindex].imgshowen++;
   Product.products[middleimgindex].imgshowen++;
   Product.products[rightimgindex].imgshowen++;
@@ -97,8 +115,12 @@ function userclick(event) {
     } else if (event.target.id === 'middleimage') {
       Product.products[middleimgindex].votes++;
     }
-    else {
+    else if (event.target.id === 'rightimg') {
       Product.products[rightimgindex].votes++;
+    }
+    else {
+      alert('please click on the showen images');
+      userattemptscount--;
     }
     renderimages();
   }
@@ -126,9 +148,80 @@ function userclick(event) {
         productResult.textContent = `${Product.products[i].name} has ${Product.products[i].votes} votes and it's showen ${Product.products[i].imgshowen} times.`;
 
       }
+      chart();
       button.removeEventListener('click', userclickforresults);
       console.log(Product.products);
 
     }
+
+    for (let i = 0; i < Product.products.length; i++) {
+
+      votes.push(Product.products[i].votes);
+      shown.push(Product.products[i].imgshowen);
+    }
+
   }
+}
+
+function chart() {
+  console.log(shown);
+  console.log(votes);
+  let ctx = document.getElementById('mychart');
+  let myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: productsnames,
+      datasets: [{
+        label: '# of Votes',
+        data: votes,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: '# of Shown',
+        data: shown,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
 }
