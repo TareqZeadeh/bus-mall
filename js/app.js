@@ -89,43 +89,46 @@ container.addEventListener('click', userclick);
 function userclick(event) {
   userattemptscount++;
 
-  if (userattemptscount<=maxattempts)
-  {
-    if (event.target.id==='leftimage') {
+  if (userattemptscount <= maxattempts) {
+    if (event.target.id === 'leftimage') {
 
       Product.products[leftimgindex].votes++;
 
-    }else if(event.target.id==='middleimage'){
+    } else if (event.target.id === 'middleimage') {
       Product.products[middleimgindex].votes++;
     }
-    else{
+    else {
       Product.products[rightimgindex].votes++;
     }
     renderimages();
   }
 
 
-  else{
-    let button=document.createElement('button');
+  else {
+    let button = document.createElement('button');
     container.append(button);
-    button.textContent='Show Results';
-    button.id='btn';
+    button.textContent = 'Show Results';
+    button.id = 'btn';
     button.addEventListener('click', userclickforresults);
 
+    container.removeEventListener('click', userclick);
+
+
+
+
+    function userclickforresults() {
+      let list = document.getElementById('results');
+      for (let i = 0; i < Product.products.length; i++) {
+        let productResult = document.createElement('li');
+
+        list.append(productResult);
+
+        productResult.textContent = `${Product.products[i].name} has ${Product.products[i].votes} votes and it's showen ${Product.products[i].imgshowen} times.`;
+
+      }
+      button.removeEventListener('click', userclickforresults);
+      console.log(Product.products);
+
+    }
   }
-
-}
-function userclickforresults()
-{
-  let list=document.getElementById('results');
-  for (let i = 0; i < Product.products.length; i++) {
-    let productResult=document.createElement('li');
-
-    list.append(productResult);
-
-    productResult.textContent=`${Product.products[i].name} has ${Product.products[i].votes} votes and it's showen ${Product.products[i].imgshowen} times.`;
-
-  }
-  console.log(Product.products);
-  container.removeEventListener('click', userclick);
 }
