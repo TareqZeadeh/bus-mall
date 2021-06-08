@@ -10,7 +10,7 @@ let rightimg = document.getElementById('rightimage');
 let maxattempts = 10;
 let userattemptscount = 0;
 
-
+let picarray = [];
 let leftimgindex;
 let middleimgindex;
 let rightimgindex;
@@ -52,12 +52,27 @@ new Product('wine-glass', 'img/wine-glass.jpg');
 
 
 
+function updatestorage() {
+  let string = JSON.stringify(Product.products);
+  localStorage.setItem('Product', string);
+}
+
+function custselection() {
+  let data = localStorage.getItem('Product');
+  let productdata = JSON.parse(data);
+  if (productdata !== null) {
+    Product.products = productdata;
+  }
+  renderimages();
+}
+
+custselection();
 function randomindex() {
 
   return Math.floor(Math.random() * Product.products.length);
 }
 
-let picarray = [];
+
 
 function renderimages() {
 
@@ -88,6 +103,7 @@ function renderimages() {
   Product.products[leftimgindex].imgshowen++;
   Product.products[middleimgindex].imgshowen++;
   Product.products[rightimgindex].imgshowen++;
+  updatestorage();
 }
 
 
@@ -118,10 +134,10 @@ function userclick(event) {
     else if (event.target.id === 'rightimg') {
       Product.products[rightimgindex].votes++;
     }
-    else {
-      alert('please click on the showen images');
-      userattemptscount--;
-    }
+    // else {
+    //   alert('please click on the showen images');
+    //   userattemptscount--;
+    // }
     renderimages();
   }
 
@@ -156,11 +172,12 @@ function userclick(event) {
 
     for (let i = 0; i < Product.products.length; i++) {
 
-      votes.push(Product.products[i].votes);
-      shown.push(Product.products[i].imgshowen);
+      votes.push( Product.products[i].votes);
+      shown.push( Product.products[i].imgshowen);
     }
 
   }
+  
 }
 
 function chart() {
